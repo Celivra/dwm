@@ -506,66 +506,126 @@ attachstack(Client *c)
 	c->mon->stack = c;
 }
 
-void
-buttonpress(XEvent *e)
-{
-	unsigned int i, x, click, occ = 0;
-	Arg arg = {0};
-	Client *c;
-	Monitor *m;
-	XButtonPressedEvent *ev = &e->xbutton;
+void buttonpress(XEvent *e) {
+    unsigned int i, x, click, occ = 0;
+    Arg arg = {0};
+    Client *c;
+    Monitor *m;
+    XButtonPressedEvent *ev = &e->xbutton;
 
-	click = ClkRootWin;
-	/* focus monitor if necessary */
-	if ((m = wintomon(ev->window)) && m != selmon) {
-		unfocus(selmon->sel, 1);
-		selmon = m;
-		focus(NULL);
-	}
-	if (ev->window == selmon->barwin) {
-		i = x = 0;
-		for (c = m->clients; c; c = c->next)
-			occ |= c->tags == 255 ? 0 : c->tags;
-		do {
-			/* do not reserve space for vacant tags */
-			if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
-				continue;
-			x += TEXTW(tags[i]);
-		} while (ev->x >= x && ++i < LENGTH(tags));
-		if (i < LENGTH(tags)) {
-			click = ClkTagBar;
-			arg.ui = 1 << i;
-		} else if (ev->x < x + blw)
-			click = ClkLtSymbol;
-		else if (ev->x > selmon->ww - TEXTW(stext) - getsystraywidth() + lrpad - 2)
-			click = ClkStatusText;
-		else {
-			x += blw;
-			c = m->clients;
+    click = ClkRootWin;
+    // focus monitor if necessary
+    if ((m = wintomon(ev->window)) && m != selmon) {
+        unfocus(selmon->sel, 1);
+        selmon = m;
+        focus(NULL);
+    }
 
-			do {
-				if (!ISVISIBLE(c))
-					continue;
-				else
-					x += (1.0 / (double)m->bt) * m->btw;
-			} while (ev->x > x && (c = c->next));
+    if (ev->window == selmon->barwin) {
+        i = x = 0;
+        for (c = m->clients; c; c = c->next)
+            occ |= c->tags == 255 ? 0 : c->tags;
+        do {
+            if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
+                continue;
+            x += TEXTW(tags[i]);
+        } while (ev->x >= x && ++i < LENGTH(tags));
+        if (i < LENGTH(tags)) {
+            click = ClkTagBar;
+            arg.ui = 1 << i;
+        } else if (ev->x < x + blw)
+            click = ClkLtSymbol;
+        else if (ev->x > selmon->ww - (stext && *stext ? TEXTW(stext) : 0) - getsystraywidth() + lrpad - 2)
+            click = ClkStatusText;
+        else {
+            x += blw;
+            c = m->clients;
 
-			if (c) {
-				click = ClkWinTitle;
-				arg.v = c;
-			}
-		}
-	} else if ((c = wintoclient(ev->window))) {
-		focus(c);
-		restack(selmon);
-		XAllowEvents(dpy, ReplayPointer, CurrentTime);
-		click = ClkClientWin;
-	}
-	for (i = 0; i < LENGTH(buttons); i++)
-		if (click == buttons[i].click && buttons[i].func && buttons[i].button == ev->button
-		&& CLEANMASK(buttons[i].mask) == CLEANMASK(ev->state))
-			buttons[i].func((click == ClkTagBar || click == ClkWinTitle) && buttons[i].arg.i == 0 ? &arg : &buttons[i].arg);
+            do {
+                if (!ISVISIBLE(c))
+                    continue;
+                else
+                    x += (1.0 / (double)m->bt) * m->btw;
+            } while (ev->x > x && (c = c->next));
+
+            if (c) {
+                click = ClkWinTitle;
+                arg.v = c;
+            }
+        }
+    } else if ((c = wintoclient(ev->window))) {
+        focus(c);
+        restack(selmon);
+        XAllowEvents(dpy, ReplayPointer, CurrentTime);
+        click = ClkClientWin;
+    }
+
+    for (i = 0; i < LENGTH(buttons); i++)
+        if (click == buttons[i].click && buttons[i].func && buttons[i].button == ev->button
+        && CLEANMASK(buttons[i].mask) == CLEANMASK(ev->state))
+            buttons[i].func((click == ClkTagBar || click == ClkWinTitle) && buttons[i].arg.i == 0 ? &arg : &buttons[i].arg);
 }
+//void
+//buttonpress(XEvent *e)
+//{
+//	unsigned int i, x, click, occ = 0;
+//	Arg arg = {0};
+//	Client *c;
+//	Monitor *m;
+//	XButtonPressedEvent *ev = &e->xbutton;
+//
+//	click = ClkRootWin;
+//	/* focus monitor if necessary */
+//	if ((m = wintomon(ev->window)) && m != selmon) {
+//		unfocus(selmon->sel, 1);
+//		selmon = m;
+//		focus(NULL);
+//	}
+//	if (ev->window == selmon->barwin) {
+//		i = x = 0;
+//		for (c = m->clients; c; c = c->next)
+//			occ |= c->tags == 255 ? 0 : c->tags;
+//		do {
+//			/* do not reserve space for vacant tags */
+//			if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
+//				continue;
+//			x += TEXTW(tags[i]);
+//		} while (ev->x >= x && ++i < LENGTH(tags));
+//		if (i < LENGTH(tags)) {
+//			click = ClkTagBar;
+//			arg.ui = 1 << i;
+//		} else if (ev->x < x + blw)
+//			click = ClkLtSymbol;
+//
+//		else if (ev->x > selmon->ww - TEXTW(stext) - getsystraywidth() + lrpad - 2)
+//			click = ClkStatusText;
+//		else {
+//			x += blw;
+//			c = m->clients;
+//
+//			do {
+//				if (!ISVISIBLE(c))
+//					continue;
+//				else
+//					x += (1.0 / (double)m->bt) * m->btw;
+//			} while (ev->x > x && (c = c->next));
+//
+//			if (c) {
+//				click = ClkWinTitle;
+//				arg.v = c;
+//			}
+//		}
+//	} else if ((c = wintoclient(ev->window))) {
+//		focus(c);
+//		restack(selmon);
+//		XAllowEvents(dpy, ReplayPointer, CurrentTime);
+//		click = ClkClientWin;
+//	}
+//	for (i = 0; i < LENGTH(buttons); i++)
+//		if (click == buttons[i].click && buttons[i].func && buttons[i].button == ev->button
+//		&& CLEANMASK(buttons[i].mask) == CLEANMASK(ev->state))
+//			buttons[i].func((click == ClkTagBar || click == ClkWinTitle) && buttons[i].arg.i == 0 ? &arg : &buttons[i].arg);
+//}
 
 void
 checkotherwm(void)
