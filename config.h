@@ -17,10 +17,10 @@ static const int smartgaps          = 0;        /* 1 means no outer gap when the
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const Bool viewontag         = True;     /* Switch view on tag switch */
-static const char *fonts[]          = { "SauceCodePro Nerd Font:size=9",
-										"Noto Sans CJK TC:size=9",
+static const char *fonts[]          = { "SauceCodePro Nerd Font:size=13",
+										"Noto Sans CJK TC:size=13",
 										"JoyPixels:pixelsize=13"};
-static const char dmenufont[]       = "SauceCodePro Nerd Font Mono:size=9";
+static const char dmenufont[]       = "SauceCodePro Nerd Font Mono:size=14";
 static const char col_gray1[]       = "#222222";//狀態條色
 static const char col_gray2[]       = "#444444";//外邊框顏色
 static const char col_gray3[]       = "#bbbbbb";//當前非活動的title顏色
@@ -93,6 +93,8 @@ static const char *backgroundcmd[] = {"nitrogen", NULL};
 
 static const char *upvol[]   = { "amixer","sset", "Master", "5%+",  NULL };
 static const char *downvol[] = { "amixer","sset", "Master", "5%-",  NULL };
+static const char *blueupvol[]   = { "/home/xiaozhai/Documents/script/bluetoothUp.sh",  NULL };
+static const char *bluedownvol[] = { "/home/xiaozhai/Documents/script/bluetoothDown.sh",  NULL };
 static const char *mutevol[] = { "amixer","sset", "Master", "mute",  NULL };
 static const char *unmutevol[] = { "amixer","sset", "Master", "unmute",  NULL };
 static const char *unmutespeak[] = { "amixer","sset", "Speaker", "unmute",  NULL };
@@ -120,10 +122,12 @@ static Key keys[] = {
 	{ MODKEY,              XK_t,                    spawn,          {.v = torbrowsercmd } },
 	{ MODKEY,    	       XK_g,                    spawn,          {.v = backgroundcmd} },
 	{ 0,                   XF86XK_AudioLowerVolume, spawn,          {.v = downvol } },
+	{ 0,                   XF86XK_AudioRaiseVolume, spawn,          {.v = upvol   } },
+	{ 0|ShiftMask,         XF86XK_AudioLowerVolume, spawn,          {.v = bluedownvol } },
+	{ 0|ShiftMask,         XF86XK_AudioRaiseVolume, spawn,          {.v = blueupvol   } },
 	{ 0,                   XF86XK_AudioMute,        spawn,          {.v = mutevol } },
 	{ 0|MODKEY,            XF86XK_AudioMute,        spawn,          {.v = unmutevol } },
 	{ 0|ShiftMask,         XF86XK_AudioMute,        spawn,          {.v = unmutespeak} },
-	{ 0,                   XF86XK_AudioRaiseVolume, spawn,          {.v = upvol   } },
 	{ 0,		           XF86XK_MonBrightnessUp,	spawn,          {.v = lightup} },
 	{ 0,		           XF86XK_MonBrightnessDown,spawn,          {.v = lightdown} },
 	{ MODKEY,              XK_bracketleft,          spawn,          {.v = downvol } },
