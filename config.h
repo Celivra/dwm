@@ -91,8 +91,8 @@ static const char *browsercmd[]  = { "chromium", NULL };
 static const char *torbrowsercmd[]  = { "/home/xiaozhai/Documents/tor-browser/Browser/start-tor-browser", NULL };
 static const char *backgroundcmd[] = {"nitrogen", NULL};
 
-static const char *upvol[]   = { "amixer","sset", "Master", "5%+",  NULL };
-static const char *downvol[] = { "amixer","sset", "Master", "5%-",  NULL };
+static const char *upvol[]   = { "amixer","-c","0","set", "Master", "5%+",  NULL };
+static const char *downvol[] = { "amixer","-c","0","set", "Master", "5%-",  NULL };
 static const char *blueupvol[]   = { "/home/xiaozhai/Documents/script/bluetoothUp.sh",  NULL };
 static const char *bluedownvol[] = { "/home/xiaozhai/Documents/script/bluetoothDown.sh",  NULL };
 static const char *mutevol[] = { "amixer","sset", "Master", "mute",  NULL };
